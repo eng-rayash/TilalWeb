@@ -1,0 +1,36 @@
+{
+  "visits": [
+    {
+      "timestamp": "2026-06-05T22:31:18.265Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "u84f2kutgjqmq1i0kvv"
+    },
+    {
+      "timestamp": "2026-06-05T22:31:48.636Z",
+      "page": "/services",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "u84f2kutgjqmq1i0kvv"
+    },
+    {
+      "timestamp": "2026-06-05T22:31:54.670Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "u84f2kutgjqmq1i0kvv"
+    },
+    {
+      "timestamp": "2026-06-05T22:44:55.490Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "a3f04zaeusdmq1ii3ka"
+    }
+  ]
+}
