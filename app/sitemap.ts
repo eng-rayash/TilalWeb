@@ -1,12 +1,9 @@
 import { MetadataRoute } from 'next';
-import cleanData from '@/lib/data/clean_data.json';
-import { Service } from '@/lib/types';
+import articlesData from '@/lib/data/services_articles.json';
 
 const BASE_URL = 'https://tlal-ksa.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const services = cleanData.services as Service[];
-
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -54,7 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // Dynamic service pages
-  const servicePages: MetadataRoute.Sitemap = services.map((service) => ({
+  const servicePages: MetadataRoute.Sitemap = Object.values(articlesData).map((service: any) => ({
     url: `${BASE_URL}/services/${encodeURIComponent(service.slug)}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,

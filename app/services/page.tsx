@@ -1,245 +1,381 @@
 'use client';
 
-import { Suspense } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
-import { ArrowLeft, BookOpen, Quote, Phone, MessageCircle } from 'lucide-react';
-import cleanData from '@/lib/data/clean_data.json';
-import { Service } from '@/lib/types';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  MessageCircle, Phone, ArrowLeft, ChevronLeft, ChevronRight,
+  Building2, Warehouse, Tent, ShieldCheck, TreePine,
+  Layers, Home, Fence, Gem
+} from 'lucide-react';
+import galleryData from '@/lib/data/gallery_data.json';
+import articlesData from '@/lib/data/services_articles.json';
 
-function ServicesContent() {
-  const contactInfo = cleanData.settings;
-  const services = cleanData.services as Service[];
-  const categories = ['الكل', ...new Set(services.map(s => s.category).filter(Boolean))];
+/* ─── Types ─────────────────────────────────────── */
+interface GalleryItem { id: string; src: string; title: string; category: string; alt: string; }
 
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const catParam = searchParams.get('cat');
+/* ─── Data ───────────────────────────────────────── */
+const allImages = galleryData as GalleryItem[];
 
-  // Derive selectedCategory and titleSubFilter directly from URL search parameter!
-  let selectedCategory = 'الكل';
-  let titleSubFilter: string | null = null;
+const SERVICES = [
+  { id: 'مقاولات عامة', label: 'مقاولات عامة', sub: 'بناء وترميم', icon: Building2, color: 'from-blue-600 to-blue-800', catKey: 'مقاولات عامة وبناء', articleKey: 'مقاولات عامة' },
+  { id: 'هناجر ومستودعات', label: 'هناجر ومستودعات', sub: 'تصميم وتنفيذ', icon: Warehouse, color: 'from-emerald-600 to-emerald-800', catKey: 'هناجر ومستودعات', articleKey: 'هناجر ومستودعات' },
+  { id: 'مظلات', label: 'المظلات', sub: 'جميع الأنواع', icon: Tent, color: 'from-purple-600 to-purple-800', catKey: 'مظلات', articleKey: 'مظلات' },
+  { id: 'سواتر', label: 'السواتر', sub: 'خصوصية وجمال', icon: ShieldCheck, color: 'from-rose-600 to-rose-800', catKey: 'سواتر', articleKey: 'سواتر' },
+  { id: 'برجولات وجلسات', label: 'برجولات وجلسات', sub: 'راحة وأناقة', icon: TreePine, color: 'from-teal-600 to-teal-800', catKey: 'برجولات وجلسات', articleKey: 'برجولات وجلسات' },
+  { id: 'واجهات كلادنج', label: 'واجهات كلادنج', sub: 'ديكور معماري', icon: Layers, color: 'from-orange-600 to-orange-800', catKey: 'واجهات كلادنج', articleKey: 'واجهات كلادنج' },
+  { id: 'بيوت شعر', label: 'بيوت شعر', sub: 'أصالة وفخامة', icon: Home, color: 'from-yellow-600 to-yellow-800', catKey: 'بيوت شعر', articleKey: 'بيوت شعر' },
+  { id: 'شبوك', label: 'الشبوك', sub: 'تسوير متين', icon: Fence, color: 'from-cyan-600 to-cyan-800', catKey: 'شبوك', articleKey: 'شبوك' },
+  { id: 'قرميد وديكور', label: 'قرميد وديكور', sub: 'جمالية فريدة', icon: Gem, color: 'from-amber-600 to-amber-800', catKey: 'قرميد وديكور', articleKey: 'قرميد وديكور' },
+];
 
-  if (catParam) {
-    const decodedCat = decodeURIComponent(catParam);
-    
-    if (decodedCat === 'بناء وترميم' || decodedCat === 'مقاولات') {
-      selectedCategory = 'بناء وترميم';
-    } else if (decodedCat === 'هناجر ومستودعات' || decodedCat === 'هناجر') {
-      selectedCategory = 'هناجر ومستودعات';
-    } else if (decodedCat === 'مظلات') {
-      selectedCategory = 'مظلات وسواتر';
-      titleSubFilter = 'مظلة';
-    } else if (decodedCat === 'سواتر') {
-      selectedCategory = 'مظلات وسواتر';
-      titleSubFilter = 'سواتر';
-    } else if (decodedCat === 'مظلات وسواتر') {
-      selectedCategory = 'مظلات وسواتر';
-    } else if (decodedCat === 'واجهات كلادنج' || decodedCat === 'كلادنج') {
-      selectedCategory = 'واجهات كلادنج';
-    } else if (decodedCat === 'بيوت شعر مجهزة' || decodedCat === 'بيوت شعر') {
-      selectedCategory = 'بيوت شعر مجهزة';
-    } else if (decodedCat === 'برجولات وجلسات' || decodedCat === 'برجولات') {
-      selectedCategory = 'برجولات وجلسات';
-    } else if (decodedCat === 'شبوك تجارية وزراعية' || decodedCat === 'شبوك') {
-      selectedCategory = 'شبوك تجارية وزراعية';
-    } else if (decodedCat === 'قرميد وديكورات' || decodedCat === 'قرميد') {
-      selectedCategory = 'قرميد وديكورات';
-    } else {
-      const exists = categories.includes(decodedCat);
-      selectedCategory = exists ? decodedCat : 'الكل';
-    }
-  }
+const marqueeStyles = `
+  @keyframes ms-rtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ms-rtl { animation: ms-rtl 50s linear infinite; display:flex; width:max-content; gap:12px; }
+  .ms-wrapper:hover .ms-rtl { animation-play-state: paused; }
+`;
 
-  const handleTabClick = (cat: string) => {
-    if (cat === 'الكل') {
-      router.push('/services', { scroll: false });
-    } else {
-      router.push(`/services?cat=${encodeURIComponent(cat)}`, { scroll: false });
-    }
-  };
+/* ─── Image Carousel ─────────────────────────────── */
+function ServiceCarousel({ images }: { images: GalleryItem[] }) {
+  const [idx, setIdx] = useState(0);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const servicesByCategory = selectedCategory === 'الكل'
-    ? services
-    : services.filter(s => s.category === selectedCategory);
+  const start = () => { timer.current = setInterval(() => setIdx(p => (p + 1) % images.length), 3000); };
+  const stop = () => { if (timer.current) clearInterval(timer.current); };
 
-  const filteredServices = servicesByCategory.filter(s => {
-    if (!titleSubFilter) return true;
-    const title = s.title.toLowerCase();
-    if (titleSubFilter === 'مظلة') {
-      return title.includes('مظلة') || title.includes('مظلات');
-    }
-    if (titleSubFilter === 'سواتر') {
-      return title.includes('سواتر') || title.includes('سواتر قماش') || title.includes('سواتر خشبية') || title.includes('سواتر مدارس');
-    }
-    return title.includes(titleSubFilter.toLowerCase());
-  });
+  useEffect(() => { if (images.length > 1) { start(); return stop; } }, [images.length]);
 
-  const getImageUrl = (item: Service, index: number) => {
-    if (item.images && item.images.length > 0 && item.images[0].src) {
-      return item.images[0].src;
-    }
-    const staticIcons = [
-      "/images/hero/service-fallback-1.jpg",
-      "/images/hero/service-fallback-2.jpg",
-      "/images/hero/service-fallback-3.jpg",
-      "/images/hero/service-fallback-4.jpg",
-    ];
-    return staticIcons[index % 4];
-  };
+  if (!images.length) return null;
 
   return (
-    <div className="bg-neutral-50 pb-24">
-      
-      {/* Page Header banner */}
-      <section className="relative bg-neutral-950 text-white py-20 overflow-hidden text-center">
-        <div className="absolute inset-0 opacity-15">
-          <Image
-            src="/images/hero/hero-services.jpg"
-            alt="خدمات مؤسسة تلال بالدمام"
-            fill
-            className="object-cover"
-            priority
-            referrerPolicy="no-referrer"
-          />
-        </div>
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <span className="text-amber-400 font-bold text-xs uppercase tracking-widest bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-full">تصنيف الأعمال والخدمات</span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mt-3">خدماتنا للمقاولات العامة والتركيبات</h1>
-          <p className="text-neutral-400 text-sm sm:text-base mt-4 max-w-2xl mx-auto">
-            تصفح دليل خدماتنا المتكاملة، المصنفة بعناية لتغطي كافة متطلبات المشاريع الحكومية والخاصة بالمنطقة الشرقية.
-          </p>
-        </div>
-      </section>
+    <div
+      className="relative h-full w-full cursor-pointer overflow-hidden rounded-2xl"
+      onMouseEnter={stop} onMouseLeave={start}
+    >
+      <AnimatePresence mode="sync">
+        <motion.div
+          key={idx}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6 }}
+          className="absolute inset-0"
+        >
+          <Image src={images[idx].src} alt={images[idx].alt} fill unoptimized className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        </motion.div>
+      </AnimatePresence>
 
-      {/* Categories Filter Tabs */}
-      <section className="bg-white border-b border-neutral-200 py-6 sticky top-20 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleTabClick(cat)}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  selectedCategory === cat
-                    ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/10'
-                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-950'
-                }`}
-              >
-                {cat}
-              </button>
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={e => { e.stopPropagation(); setIdx(p => (p - 1 + images.length) % images.length); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm hover:bg-amber-500 transition-colors"
+          ><ChevronRight className="h-4 w-4" /></button>
+          <button
+            onClick={e => { e.stopPropagation(); setIdx(p => (p + 1) % images.length); }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 rounded-full bg-black/40 p-2 text-white backdrop-blur-sm hover:bg-amber-500 transition-colors"
+          ><ChevronLeft className="h-4 w-4" /></button>
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+            {images.map((_, i) => (
+              <button key={i} onClick={() => setIdx(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === idx ? 'w-5 bg-amber-400' : 'w-1.5 bg-white/50'}`} />
             ))}
           </div>
-        </div>
-      </section>
+        </>
+      )}
 
-      {/* Services List Index */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        {filteredServices.length === 0 ? (
-          <div className="text-center py-20 bg-white border border-neutral-150 rounded-2xl">
-            <BookOpen className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-            <h3 className="font-bold text-lg text-neutral-800">لا توجد خدمات متاحة في هذا التصنيف حالياً.</h3>
-            <button 
-              onClick={() => handleTabClick('الكل')}
-              className="mt-4 text-amber-500 font-bold hover:underline"
-            >
-              العودة لكافة الخدمات
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {filteredServices.map((service, index) => (
-              <div 
-                key={service.slug}
-                className="bg-white rounded-2xl border border-neutral-100 hover:border-amber-400 p-6 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300 text-right flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative h-64 w-full rounded-xl overflow-hidden mb-6 bg-neutral-100">
-                    <Image
-                      src={getImageUrl(service, index)}
-                      alt={service.title}
-                      fill
-                      className="object-cover group-hover:scale-103 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute top-4 right-4 bg-neutral-950/80 backdrop-blur text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-neutral-800">
-                      {service.category || 'مقاولات عامة'}
-                    </div>
-                  </div>
-
-                  <h2 className="font-bold text-xl sm:text-2xl text-neutral-950 group-hover:text-amber-600 transition-colors">
-                    {service.title}
-                  </h2>
-                  <p className="text-neutral-500 text-sm leading-relaxed mt-4 line-clamp-3">
-                    {service.description}
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 items-center mt-8 pt-6 border-t border-neutral-50">
-                  <Link
-                    href={`/services/${service.slug}`}
-                    className="w-full sm:w-auto text-center bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shadow-amber-500/10 shrink-0"
-                  >
-                    تفاصيل الخدمة والمواصفات
-                  </Link>
-                  <a
-                    href={`https://wa.me/${contactInfo.whatsapp}?text=السلام%20عليكم،%20أستفسر%20عن%20خدمة%20${encodeURIComponent(service.title)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto text-center flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md shadow-emerald-900/10"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>تواصل فوري عبر واتساب</span>
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Trust Quote box */}
-      <section className="max-w-5xl mx-auto px-4 mt-24">
-        <div className="bg-neutral-900 text-white p-8 sm:p-12 rounded-2xl border border-neutral-800 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 opacity-5 -translate-y-6 translate-x-6">
-            <Quote className="w-48 h-48 rotate-180" />
-          </div>
-          <p className="text-amber-500 font-bold uppercase text-xs tracking-wider">التزام بالدقة والإتقان</p>
-          <h2 className="text-xl sm:text-2xl font-bold text-white mt-3 mb-4">هل تحتاج لمواصفات وبنية حديدية بمقاييس خاصة؟</h2>
-          <p className="text-neutral-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8">
-            بإمكان فريقنا الهندسي تصميم وتفصيل الهناجر والمظلات وفقاً لطلبكم واشتراطات أمان الدفاع المدني مع توريد أفضل حديد سابك والدهانات المقاومة للصدأ.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href={`tel:${contactInfo.phone}`}
-              className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-bold px-8 py-3.5 rounded-xl text-sm transition-all"
-            >
-              اتصل بمسؤول المبيعات
-            </a>
-            <Link
-              href="/contact"
-              className="bg-transparent border border-neutral-700 hover:border-white text-white font-bold px-8 py-3.5 rounded-xl text-sm transition-all"
-            >
-              مراسلتنا عبر البريد الإلكتروني
-            </Link>
-          </div>
-        </div>
-      </section>
-
+      <div className="absolute bottom-4 right-4 z-10 text-xs text-white/80 font-medium">
+        {idx + 1} / {images.length}
+      </div>
     </div>
   );
 }
 
-export default function ServicesPage() {
+/* ─── Article Card ───────────────────────────────── */
+type ArticleEntry = {
+  title: string; subtitle: string; intro: string;
+  features: { icon: string; title: string; desc: string }[];
+  tips: string[]; whyUs: string;
+  stats: { value: string; label: string }[];
+};
+type ArticlesMap = Record<string, ArticleEntry>;
+const articles = articlesData as unknown as ArticlesMap;
+
+function ArticleSection({ articleKey }: { articleKey: string }) {
+  const art = articles[articleKey];
+  if (!art) return null;
   return (
-    <Suspense fallback={
-      <div className="bg-neutral-50 min-h-screen flex items-center justify-center text-center py-20 text-neutral-500 font-bold">
-        جاري تحميل الخدمات...
+    <div className="mt-8 space-y-8">
+      {/* Intro */}
+      <div className="rounded-2xl bg-gray-900/50 border border-white/5 p-6">
+        <p className="text-gray-300 leading-relaxed text-sm md:text-base">{art.intro}</p>
       </div>
-    }>
-      <ServicesContent />
-    </Suspense>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {art.stats.map((s) => (
+          <div key={s.label} className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-center">
+            <div className="text-xl font-black text-amber-400">{s.value}</div>
+            <div className="mt-1 text-xs text-gray-400">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Features */}
+      <div>
+        <h3 className="mb-4 text-lg font-bold text-white">مميزات الخدمة</h3>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {art.features.map((f) => (
+            <div key={f.title} className="flex gap-3 rounded-xl border border-white/5 bg-gray-900/40 p-4">
+              <span className="text-2xl shrink-0">{f.icon}</span>
+              <div>
+                <h4 className="font-bold text-white text-sm">{f.title}</h4>
+                <p className="mt-1 text-xs text-gray-400 leading-relaxed">{f.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why Us */}
+      <div className="rounded-2xl border-r-4 border-amber-500 bg-amber-500/5 p-5">
+        <h3 className="mb-2 font-bold text-amber-400">لماذا تختار تلال للمقاولات؟</h3>
+        <p className="text-sm text-gray-300 leading-relaxed">{art.whyUs}</p>
+      </div>
+
+      {/* Tips */}
+      <div>
+        <h3 className="mb-4 text-lg font-bold text-white">نصائح وأفضليات</h3>
+        <ul className="space-y-2">
+          {art.tips.map((tip, i) => (
+            <li key={i} className="flex gap-3 text-sm text-gray-300">
+              <span className="mt-0.5 shrink-0 text-amber-400 font-bold">💡</span>
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* CTA */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <a
+          href={`https://wa.me/00966506819387?text=${encodeURIComponent(`أريد الاستفسار عن خدمة ${art.title}`)}`}
+          target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-green-600 py-4 font-bold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-500 hover:scale-[1.02]"
+        >
+          <MessageCircle className="h-5 w-5" />
+          تواصل واتساب الآن
+        </a>
+        <a
+          href="tel:+966506819387"
+          className="flex-1 flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-4 font-bold text-white transition-all hover:border-amber-500 hover:bg-amber-500/10"
+        >
+          <Phone className="h-5 w-5 text-amber-400" />
+          0506819387
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Page ──────────────────────────────────── */
+export default function ServicesPage() {
+  const [active, setActive] = useState(SERVICES[0].id);
+  const activeService = SERVICES.find(s => s.id === active)!;
+  const categoryImages = allImages.filter(img => img.category === activeService.catKey).slice(0, 20);
+
+  // Build marquee images with sufficient repetition to prevent empty space gaps
+  let marqueeImages = [...categoryImages];
+  while (marqueeImages.length < 30 && categoryImages.length > 0) {
+    marqueeImages = [...marqueeImages, ...categoryImages];
+  }
+  marqueeImages = [...marqueeImages, ...marqueeImages];
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('cat');
+      if (cat) {
+        const decodedCat = decodeURIComponent(cat);
+        const matched = SERVICES.find(s => 
+          s.id.includes(decodedCat) || 
+          s.label.includes(decodedCat) || 
+          s.sub.includes(decodedCat) || 
+          decodedCat.includes(s.id) ||
+          decodedCat.includes(s.sub)
+        );
+        if (matched) {
+          setActive(matched.id);
+        }
+      }
+    }
+  }, []);
+
+  return (
+    <main dir="rtl" className="min-h-screen bg-gray-950 text-white">
+      <style dangerouslySetInnerHTML={{ __html: marqueeStyles }} />
+
+      {/* ── HERO ─────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 py-20 text-center">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-40 right-1/3 h-[500px] w-[500px] rounded-full bg-amber-500/8 blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 h-64 w-64 rounded-full bg-amber-400/5 blur-3xl" />
+        </div>
+        <div className="relative mx-auto max-w-4xl px-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-5 py-2 text-sm font-medium text-amber-400"
+          >
+            مؤسسة تلال للمقاولات العامة
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
+            className="mb-4 text-4xl font-black leading-tight md:text-6xl"
+          >
+            خدماتنا{' '}
+            <span className="bg-gradient-to-l from-amber-300 to-amber-500 bg-clip-text text-transparent">المتكاملة</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
+            className="mx-auto max-w-2xl text-base text-gray-400 md:text-lg"
+          >
+            9 تخصصات إنشائية — كل خدمة مدعومة بخبرة عملية وصور أعمال حقيقية من مشاريعنا المنجزة
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ── LAYOUT: Sidebar + Content ────────────── */}
+      <div className="mx-auto max-w-7xl px-4 py-12">
+        <div className="flex flex-col gap-8 lg:flex-row">
+
+          {/* Sidebar */}
+          <aside className="lg:w-72 shrink-0">
+            <div className="sticky top-24 space-y-1.5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gray-500">التخصصات</p>
+              {SERVICES.map((svc, i) => {
+                const Icon = svc.icon;
+                const isActive = active === svc.id;
+                return (
+                  <motion.button
+                    key={svc.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    onClick={() => setActive(svc.id)}
+                    className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-right transition-all duration-300 ${
+                      isActive
+                        ? 'bg-amber-500 text-gray-950 shadow-lg shadow-amber-500/25'
+                        : 'border border-white/5 bg-white/3 text-gray-300 hover:border-amber-500/30 hover:bg-white/8 hover:text-white'
+                    }`}
+                  >
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${svc.color} shadow`}>
+                      <Icon className="h-4 w-4 text-white" />
+                    </span>
+                    <div className="text-right">
+                      <div className={`text-sm font-bold ${isActive ? 'text-gray-950' : ''}`}>{svc.label}</div>
+                      <div className={`text-xs ${isActive ? 'text-gray-800' : 'text-gray-500'}`}>{svc.sub}</div>
+                    </div>
+                    {isActive && <ChevronLeft className="mr-auto h-4 w-4 text-gray-950" />}
+                  </motion.button>
+                );
+              })}
+
+              {/* Gallery CTA */}
+              <div className="mt-4 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 p-4 text-center">
+                <p className="text-xs text-gray-400 mb-3">تصفح جميع أعمالنا</p>
+                <Link
+                  href="/gallery"
+                  className="block rounded-xl bg-amber-500 py-2.5 text-sm font-bold text-gray-950 hover:bg-amber-400 transition-colors"
+                >
+                  معرض الأعمال الكامل →
+                </Link>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+              >
+                {/* Service Header */}
+                <div className="mb-6 flex items-start gap-4">
+                  <div>
+                    <div className="mb-1 text-xs font-bold uppercase tracking-widest text-amber-400">
+                      {activeService.sub}
+                    </div>
+                    <h2 className="text-2xl font-black text-white md:text-3xl">
+                      {activeService.label}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Photo Carousel — full width hero */}
+                <div className="relative h-72 md:h-96 w-full overflow-hidden rounded-3xl border border-white/5 shadow-2xl mb-8">
+                  {categoryImages.length > 0 ? (
+                    <ServiceCarousel images={categoryImages} />
+                  ) : (
+                    <div className="flex h-full items-center justify-center bg-gray-900 text-gray-600">
+                      لا توجد صور لهذا التصنيف
+                    </div>
+                  )}
+                  {/* Overlay badge */}
+                  <div className="absolute top-4 right-4 z-20 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 text-xs font-bold text-amber-400 backdrop-blur-sm">
+                    {categoryImages.length} صورة حقيقية من مشاريعنا
+                  </div>
+                </div>
+
+                {/* Auto-scroll strip */}
+                {marqueeImages.length > 0 && (
+                  <div className="ms-wrapper mb-8 overflow-hidden rounded-2xl">
+                    <div className="ms-rtl">
+                      {marqueeImages.map((img, i) => (
+                        <div key={`${img.id}-${i}`} className="relative h-20 w-32 shrink-0 overflow-hidden rounded-xl border border-white/5">
+                          <Image src={img.src} alt={img.alt} fill unoptimized className="object-cover" sizes="128px" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Article */}
+                <ArticleSection articleKey={activeService.articleKey} />
+
+                {/* Sub-services link */}
+                <div className="mt-8 rounded-2xl border border-white/5 bg-gray-900/50 p-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-white mb-1">هل تبحث عن معلومات مفصلة أو صور مشاريع أكثر؟</p>
+                    <p className="text-xs text-gray-400">يمكنك قراءة المقال الشامل والتقارير والنصائح لهذه الخدمة أو مشاهدة كافة الأعمال الحقيقية.</p>
+                  </div>
+                  <div className="flex flex-wrap gap-3 w-full sm:w-auto shrink-0 justify-end">
+                    <Link
+                      href={`/services/${activeService.id.replace(/ /g, '-')}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-bold text-gray-950 hover:bg-amber-400 transition-all w-full sm:w-auto"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      المقال والتفاصيل الكاملة
+                    </Link>
+                    <Link
+                      href={`/gallery?category=${encodeURIComponent(activeService.catKey)}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 px-5 py-2.5 text-sm font-bold text-white hover:border-amber-500 hover:bg-amber-500/10 transition-all w-full sm:w-auto"
+                    >
+                      عرض ألبوم الصور المخصصة
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </main>
+
+        </div>
+      </div>
+    </main>
   );
 }

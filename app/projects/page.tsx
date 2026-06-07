@@ -1,22 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { MapPin, Phone, MessageCircle, ArrowLeft, Heart, Layers } from 'lucide-react';
 import cleanData from '@/lib/data/clean_data.json';
+import galleryData from '@/lib/data/gallery_data.json';
 import { Project } from '@/lib/types';
 
 export default function ProjectsPage() {
   const contactInfo = cleanData.settings;
-  const projects = cleanData.projects as Project[];
-  const categories = ['الكل', 'مظلات وسواتر', 'هناجر ومستودعات', 'بناء وترميم', 'واجهات كلادنج'];
+  
+  // Dynamically map gallery items to projects to populate with real images
+  const projects: Project[] = (galleryData as any[]).map((item) => ({
+    id: item.id,
+    title: item.title,
+    category: item.category,
+    location: 'المنطقة الشرقية',
+    description: item.alt || `${item.title} - مشروع منفذ بجودة واحترافية عالية بالدمام والمنطقة الشرقية.`,
+    images: [{ src: item.src, alt: item.alt || item.title }]
+  }));
+
+  const categories = [
+    'الكل',
+    'مقاولات عامة وبناء',
+    'هناجر ومستودعات',
+    'مظلات',
+    'سواتر',
+    'برجولات وجلسات',
+    'واجهات كلادنج',
+    'بيوت شعر',
+    'شبوك',
+    'قرميد وديكور'
+  ];
   const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [visibleCount, setVisibleCount] = useState(18);
+
+  // Reset pagination when category changes
+  useEffect(() => {
+    setVisibleCount(18);
+  }, [selectedCategory]);
 
   const filteredProjects = selectedCategory === 'الكل'
     ? projects
     : projects.filter(p => p.category === selectedCategory);
+
+  const displayedProjects = filteredProjects.slice(0, visibleCount);
 
   const getImageUrl = (item: Project) => {
     if (item.images && item.images.length > 0 && item.images[0].src) {
@@ -84,56 +114,71 @@ export default function ProjectsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, idx) => (
-              <div 
-                key={project.id}
-                className="bg-white rounded-2xl border border-neutral-100 hover:border-amber-400 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
-              >
-                <div>
-                  <div className="relative h-64 w-full bg-neutral-100 overflow-hidden">
-                    <Image
-                      src={getImageUrl(project)}
-                      alt={project.title}
-                      fill
-                      className="object-cover group-hover:scale-103 transition-transform duration-500"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute top-4 right-4 bg-neutral-950/80 backdrop-blur text-amber-400 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
-                      <span>{project.category}</span>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayedProjects.map((project, idx) => (
+                <div 
+                  key={project.id}
+                  className="bg-white rounded-2xl border border-neutral-100 hover:border-amber-400 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="relative h-64 w-full bg-neutral-100 overflow-hidden">
+                      <Image
+                        src={getImageUrl(project)}
+                        alt={project.title}
+                        fill
+                        unoptimized
+                        className="object-cover group-hover:scale-103 transition-transform duration-500"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute top-4 right-4 bg-neutral-950/80 backdrop-blur text-amber-400 text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                        <span>{project.category}</span>
+                      </div>
+                    </div>
+
+                    <div className="p-6">
+                      <div className="flex items-center gap-1.5 justify-start text-neutral-400 text-xs mb-3">
+                        <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
+                        <span>{project.location}</span>
+                      </div>
+
+                      <h2 className="font-bold text-lg sm:text-xl text-neutral-950 group-hover:text-amber-600 transition-colors line-clamp-1">
+                        {project.title}
+                      </h2>
+                      <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed mt-3.5 line-clamp-3">
+                        {project.description}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-6">
-                    <div className="flex items-center gap-1.5 justify-start text-neutral-400 text-xs mb-3">
-                      <MapPin className="w-4 h-4 text-amber-500 shrink-0" />
-                      <span>{project.location}</span>
-                    </div>
-
-                    <h2 className="font-bold text-lg sm:text-xl text-neutral-950 group-hover:text-amber-600 transition-colors line-clamp-1">
-                      {project.title}
-                    </h2>
-                    <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed mt-3.5 line-clamp-3">
-                      {project.description}
-                    </p>
+                  <div className="p-6 pt-0 mt-4 border-t border-neutral-50 flex items-center justify-between">
+                    <span className="text-neutral-400 text-xs">مكتمل بجودة فنية ٢٠٢٦</span>
+                    <a
+                      href={`https://wa.me/${contactInfo.whatsapp}?text=السلام%20عليكم،%20رأيت%20مشروع%20${encodeURIComponent(project.title)}%20وأريد%20الاستفسار%20عن%20سعر%20تركيب%20مماثل`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4 shrink-0" />
+                      <span>أريد مماثل</span>
+                    </a>
                   </div>
                 </div>
+              ))}
+            </div>
 
-                <div className="p-6 pt-0 mt-4 border-t border-neutral-50 flex items-center justify-between">
-                  <span className="text-neutral-400 text-xs">مكتمل بجودة فنية ٢٠٢٦</span>
-                  <a
-                    href={`https://wa.me/${contactInfo.whatsapp}?text=السلام%20عليكم،%20رأيت%20مشروع%20${encodeURIComponent(project.title)}%20وأريد%20الاستفسار%20عن%20سعر%20تركيب%20مماثل`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all"
-                  >
-                    <MessageCircle className="w-4 h-4 shrink-0" />
-                    <span>أريد مماثل</span>
-                  </a>
-                </div>
+            {/* Load More Button */}
+            {visibleCount < filteredProjects.length && (
+              <div className="mt-12 text-center">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 18)}
+                  className="bg-neutral-900 hover:bg-neutral-850 border border-neutral-850 hover:border-amber-550 text-amber-400 hover:text-amber-300 font-bold px-8 py-3.5 rounded-xl text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  عرض المزيد ({filteredProjects.length - visibleCount} مشروع متبقي)
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </section>
 

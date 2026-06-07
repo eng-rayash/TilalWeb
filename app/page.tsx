@@ -7,52 +7,76 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Phone, MessageCircle, ArrowLeft, ArrowRight, 
   MapPin, Eye, Star, CheckCircle, FlameKindling, 
-  Sparkles, Award, Shield, UserCheck, X, ChevronLeft, ChevronRight, BookOpen
+  Sparkles, Award, Shield, UserCheck, X, ChevronLeft, ChevronRight, BookOpen,
+  Building2, Warehouse, Tent, ShieldCheck, TreePine, Layers, Home as HomeIcon, Fence, Gem
 } from 'lucide-react';
 import cleanData from '@/lib/data/clean_data.json';
 import { Service, Project } from '@/lib/types';
 import galleryItemsRaw from '@/lib/data/gallery_data.json';
+import articlesData from '@/lib/data/services_articles.json';
+
+const SERVICES = [
+  { id: 'مقاولات-عامة', label: 'مقاولات عامة', sub: 'بناء وترميم', icon: Building2, color: 'from-blue-600 to-blue-800', catKey: 'مقاولات عامة وبناء', articleKey: 'مقاولات عامة' },
+  { id: 'هناجر-ومستودعات', label: 'هناجر ومستودعات', sub: 'تصميم وتنفيذ', icon: Warehouse, color: 'from-emerald-600 to-emerald-800', catKey: 'هناجر ومستودعات', articleKey: 'هناجر ومستودعات' },
+  { id: 'مظلات', label: 'المظلات', sub: 'جميع الأنواع', icon: Tent, color: 'from-purple-600 to-purple-800', catKey: 'مظلات', articleKey: 'مظلات' },
+  { id: 'سواتر', label: 'السواتر', sub: 'خصوصية وجمال', icon: ShieldCheck, color: 'from-rose-600 to-rose-800', catKey: 'سواتر', articleKey: 'سواتر' },
+  { id: 'برجولات-وجلسات', label: 'برجولات وجلسات', sub: 'راحة وأناقة', icon: TreePine, color: 'from-teal-600 to-teal-800', catKey: 'برجولات وجلسات', articleKey: 'برجولات وجلسات' },
+  { id: 'واجهات-كلادنج', label: 'واجهات كلادنج', sub: 'ديكور معماري', icon: Layers, color: 'from-orange-600 to-orange-800', catKey: 'واجهات كلادنج', articleKey: 'واجهات كلادنج' },
+  { id: 'بيوت-شعر', label: 'بيوت شعر', sub: 'أصالة وفخامة', icon: HomeIcon, color: 'from-yellow-600 to-yellow-800', catKey: 'بيوت شعر', articleKey: 'بيوت شعر' },
+  { id: 'شبوك', label: 'الشبوك', sub: 'تسوير متين', icon: Fence, color: 'from-cyan-600 to-cyan-800', catKey: 'شبوك', articleKey: 'شبوك' },
+  { id: 'قرميد-وديكور', label: 'قرميد وديكور', sub: 'جمالية فريدة', icon: Gem, color: 'from-amber-600 to-amber-800', catKey: 'قرميد وديكور', articleKey: 'قرميد وديكور' },
+];
 
 export default function Home() {
   const contactInfo = cleanData.settings;
-  const services = cleanData.services as Service[];
-  const projects = cleanData.projects as Project[];
   
-  // State for block 4: Services & Project Articles
+  // State for Block 4: Services Showcase
   const [activeServiceIdx, setActiveServiceIdx] = useState(0);
-  const activeService = services[activeServiceIdx] || services[0];
+  const activeService = SERVICES[activeServiceIdx];
+  const activeArticle = (articlesData as any)[activeService.articleKey];
   
-  // Extract unique service categories dynamically
-  const serviceCategories = Array.from(new Set(services.map(s => s.category).filter(Boolean))) as string[];
-  const selectedServiceCategory = activeService?.category || 'مظلات وسواتر';
+  // Filter gallery items for active service to showcase as projects
+  const filteredProjects = (galleryItemsRaw as any[]).filter(
+    (item) => item.category === activeService.catKey
+  ).slice(0, 5); // Take up to 5 samples
+
+  // Get 6 unique project samples from different categories
+  const featuredProjects = SERVICES.map(svc => {
+    const img = (galleryItemsRaw as any[]).find(item => item.category === svc.catKey);
+    return img ? {
+      id: img.id,
+      title: svc.label + ' -  مشاريع تلال',
+      description: img.alt || svc.sub,
+      category: svc.label,
+      src: img.src,
+      slug: svc.id
+    } : null;
+  }).filter((x): x is NonNullable<typeof x> => x !== null).slice(0, 6);
   
-  // Filter projects by current service
-  const filteredProjects = projects.filter(
-    (p) => p.serviceSlug === activeService?.slug || p.category === activeService?.category
-  );
-  
-  // Active Project Article inside Block 4
   const [activeProjectIdx, setActiveProjectIdx] = useState<number | null>(null);
   const activeProjectIdxResolved = (activeProjectIdx !== null && activeProjectIdx < filteredProjects.length) ? activeProjectIdx : (filteredProjects.length > 0 ? 0 : null);
   const activeProject = activeProjectIdxResolved !== null ? filteredProjects[activeProjectIdxResolved] : null;
 
-  // State for block 5: Photos of our works / Gallery
+  // State for Block 5: Photos of our works / Gallery
   const [galleryCategory, setGalleryCategory] = useState('الكل');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Load real image data of 16 sample items from tlal-ksa WordPress site
-  const rawGalleryItems = (galleryItemsRaw as any[]).slice(0, 16);
+  // Load real image data of sample items
+  const rawGalleryItems = (galleryItemsRaw as any[]).slice(0, 24);
+  const marqueeItems1 = (galleryItemsRaw as any[]).filter((_: any, i: number) => i % 3 === 0).slice(0, 20);
+  const marqueeItems2 = (galleryItemsRaw as any[]).filter((_: any, i: number) => i % 3 === 1).slice(0, 20);
 
   const galleryFilters = [
     'الكل',
-    'مظلات وسواتر',
+    'مقاولات عامة وبناء',
     'هناجر ومستودعات',
-    'بناء وترميم',
-    'واجهات كلادنج',
-    'بيوت شعر مجهزة',
+    'مظلات',
+    'سواتر',
     'برجولات وجلسات',
-    'شبوك تجارية وزراعية',
-    'قرميد وديكورات'
+    'واجهات كلادنج',
+    'بيوت شعر',
+    'شبوك',
+    'قرميد وديكور'
   ];
 
   const filteredGallery = galleryCategory === 'الكل'
@@ -85,6 +109,9 @@ export default function Home() {
 
   // Safe Fallback image helper
   const getImageUrl = (item: any) => {
+    if (item?.src) {
+      return item.src;
+    }
     if (item?.images && item.images.length > 0 && item.images[0].src) {
       return item.images[0].src;
     }
@@ -302,7 +329,15 @@ export default function Home() {
 
   return (
     <div className="bg-neutral-50 font-sans text-neutral-800 text-right overflow-hidden">
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes home-marquee-rtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes home-marquee-ltr { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+        .home-mq-rtl { animation: home-marquee-rtl 45s linear infinite; display:flex; width:max-content; }
+        .home-mq-ltr { animation: home-marquee-ltr 38s linear infinite; display:flex; width:max-content; }
+        .home-mq-wrap:hover .home-mq-rtl, .home-mq-wrap:hover .home-mq-ltr { animation-play-state: paused; }
+      `}} />
       
+
       {/* 1. HERO SECTION ("شاشة العرض اسفل شريط العنوان") */}
       <section 
         ref={heroRef}
@@ -535,65 +570,24 @@ export default function Home() {
           </p>
           <div className="w-12 h-1 bg-amber-500 mx-auto my-5 rounded-full" />
 
-          {/* Service Selector Categories Bar */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-8 mb-12">
-            {serviceCategories.map((cat) => {
-              const isSelected = selectedServiceCategory === cat;
-              const count = services.filter(s => s.category === cat).length;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    // Set active service to the first service of this selected category automatically
-                    const firstSvcIdx = services.findIndex(s => s.category === cat);
-                    if (firstSvcIdx !== -1) {
-                      setActiveServiceIdx(firstSvcIdx);
-                      setActiveProjectIdx(0); // Auto preview first project
-                    }
-                  }}
-                  className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center gap-2 cursor-pointer border ${
-                    isSelected
-                      ? 'bg-amber-500 text-neutral-950 border-amber-500 shadow-lg shadow-amber-500/10 scale-102'
-                      : 'bg-white text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 border-neutral-200'
-                  }`}
-                >
-                  <Sparkles className={`w-3.5 h-3.5 ${isSelected ? 'text-neutral-955' : 'text-amber-500'}`} />
-                  <span>{cat}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
-                    isSelected ? 'bg-neutral-950/20 text-neutral-950' : 'bg-neutral-100 text-neutral-500'
-                  }`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
           {/* Interactive Split Screen Dashboard (12 Cols) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-right items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 text-right items-stretch mt-12">
             
             {/* 1. MASTER SIDE SELECTOR (Right Pane: Spans 4 Columns on large screen) */}
             <div className="lg:col-span-4 flex flex-col gap-4">
               <div className="bg-white p-5 rounded-2xl border border-neutral-200/80 shadow-sm">
-                <p className="text-neutral-400 font-bold text-xs mb-4">الخدمات المتاحة تحت تصنيف {selectedServiceCategory}:</p>
+                <p className="text-neutral-400 font-bold text-xs mb-4">الخدمات الكبرى المتاحة:</p>
                 
                 <div className="flex flex-col gap-3">
-                  {services.map((svc, originalIdx) => {
-                    // Only render services inside selected category
-                    if (svc.category !== selectedServiceCategory) return null;
-
-                    const isCurrentActive = activeServiceIdx === originalIdx;
-                    
-                    const projectsCount = projects.filter(
-                      (p) => p.serviceSlug === svc.slug || p.category === svc.category
-                    ).length;
-
+                  {SERVICES.map((svc, idx) => {
+                    const isCurrentActive = activeServiceIdx === idx;
+                    const Icon = svc.icon;
                     return (
                       <div
-                        key={svc.slug}
+                        key={svc.id}
                         onClick={() => {
-                          setActiveServiceIdx(originalIdx);
-                          setActiveProjectIdx(0); // Reset project view to first
+                          setActiveServiceIdx(idx);
+                          setActiveProjectIdx(0);
                         }}
                         className={`p-4 rounded-xl border transition-all duration-300 flex items-center justify-between cursor-pointer select-none relative overflow-hidden ${
                           isCurrentActive
@@ -601,34 +595,31 @@ export default function Home() {
                             : 'border-neutral-200/60 bg-neutral-50 hover:bg-white hover:border-amber-400'
                         }`}
                       >
-                        {/* Decorative golden right active bar */}
                         {isCurrentActive && (
                           <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-amber-500" />
                         )}
 
-                        <div className="pr-2 pl-4">
-                          <h4 className={`font-black text-sm transition-colors ${
-                            isCurrentActive ? 'text-white' : 'text-neutral-900'
-                          }`}>
-                            {svc.title}
-                          </h4>
-                          <p className={`text-[11px] leading-relaxed line-clamp-1 mt-1 ${
-                            isCurrentActive ? 'text-neutral-400' : 'text-neutral-500'
-                          }`}>
-                            {svc.description}
-                          </p>
+                        <div className="pr-2 pl-4 flex items-center gap-3">
+                          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${svc.color} shadow`}>
+                            <Icon className="h-4 w-4 text-white" />
+                          </span>
+                          <div>
+                            <h4 className={`font-black text-sm transition-colors ${
+                              isCurrentActive ? 'text-white' : 'text-neutral-900'
+                            }`}>
+                              {svc.label}
+                            </h4>
+                            <p className={`text-[11px] leading-relaxed mt-0.5 ${
+                              isCurrentActive ? 'text-neutral-400' : 'text-neutral-500'
+                            }`}>
+                              {svc.sub}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="flex flex-col items-end gap-2 shrink-0">
-                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                            isCurrentActive ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-white text-neutral-500 border border-neutral-200'
-                          }`}>
-                            {projectsCount > 0 ? `${projectsCount} أعمال` : 'سابقة'}
-                          </span>
-                          <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${
-                            isCurrentActive ? '-translate-x-1.5 text-amber-400' : 'text-neutral-300'
-                          }`} />
-                        </div>
+                        <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${
+                          isCurrentActive ? '-translate-x-1.5 text-amber-400' : 'text-neutral-300'
+                        }`} />
                       </div>
                     );
                   })}
@@ -653,68 +644,40 @@ export default function Home() {
                 <div className="border-b border-neutral-150 pb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <span className="text-amber-600 text-[10.5px] font-black uppercase tracking-wider bg-amber-500/10 rounded-full px-2.5 py-1">
-                      المواصفات الفنية المعتمدة
+                      {activeService.sub}
                     </span>
-                    <h3 className="text-lg sm:text-xl font-black text-neutral-950 mt-2">{activeService?.title}</h3>
-                    <p className="text-neutral-500 text-[12px] mt-1 max-w-xl">{activeService?.description}</p>
+                    <h3 className="text-lg sm:text-xl font-black text-neutral-950 mt-2">{activeArticle.title}</h3>
+                    <p className="text-neutral-500 text-[12px] mt-1 max-w-xl">{activeArticle.subtitle}</p>
                   </div>
                   
-                  <a
-                    href={`tel:${contactInfo.phone}`}
+                  <Link
+                    href={`/services/${activeService.id}`}
                     className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-neutral-950 px-5 py-3 rounded-xl font-black text-xs shrink-0 flex items-center justify-center gap-2 shadow-md shadow-amber-500/5 transition-all duration-300 active:scale-95 cursor-pointer"
                   >
-                    <Phone className="w-4 h-4 shrink-0" />
-                    <span>تواصل فوري وطلب تسعير</span>
-                  </a>
+                    <span>عرض التفاصيل والمقال الكامل</span>
+                    <ArrowLeft className="w-4 h-4 shrink-0" />
+                  </Link>
                 </div>
 
                 {/* Sub-Service Engineering Specifications Mapping Sheet */}
                 <div className="mt-5">
-                  <p className="text-neutral-900 font-bold text-xs mb-3">📋 دليل المواصفات الفنية من إدارة التشييد:</p>
+                  <p className="text-neutral-900 font-bold text-xs mb-3">📋 دليل المواصفات الفنية للخدمة:</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {(() => {
-                      const title = activeService?.title || '';
-                      let specs = [
-                        { label: 'الخامة والتشطيب', val: 'خرسانة مسلحة مقاومة للملوحة مجهزة بأقوى أنوع الحديد المعتمد' },
-                        { label: 'الإشراف الميداني', val: 'إشراف هندسي دقيق من التخطيط الأولي والتسليم للبلدية' },
-                        { label: 'العزل الرطوبي', val: 'دهان عازل مائي وحراري للأسطح والقواعد لجميع المباني' },
-                        { label: 'التشطبيات النهائية', val: 'تنفيذ تشطيب لوكس وديكورات مخصصة تليق بالعملاء المميزين' }
-                      ];
-                      if (title.includes('مظلات') || title.includes('سواتر')) {
-                        specs = [
-                          { label: 'الخامة الرئيسية والنسيج', val: 'نظام تغطية PVC ألماني بوزن ١١٠٠ غرام / بولي إثيلين كوري فاخر' },
-                          { label: 'عزل الحرارة والتآكل', val: 'حماية كاملة من الأشعة فوق البنفسجية وتظليل تام للأشعة ١٠٠٪' },
-                          { label: 'سماكة التشييد والقوام', val: 'مواسير وجسور حديدية بسماكات تبدأ من ٢ ملم ودهان أبيض/بيج متميز' },
-                          { label: 'الضمان المبرم المقترن', val: 'ضمان رسمي موثق وممضي يتراوح ما بين ٥ إلى ١٠ سنوات شامل الملحقات' }
-                        ];
-                      } else if (title.includes('هناجر') || title.includes('مستودعات')) {
-                        specs = [
-                          { label: 'الهيكل والجسور المستعملة', val: 'حديد مجدول عالي الجودة I-Beam وسكك حديدية مدعمة' },
-                          { label: 'أكواد وموافقات البناء', val: 'مطابق تماماً لاشتراطات الدفاع المدني وكود التشييد السعودي SBC' },
-                          { label: 'التغطيات وتكنولوجيا العزل', val: 'تغطيات ساندوتش بانل معزول حرارياً بألياف زجاجية مقاومة تاماً للحرائق' },
-                          { label: 'المواصفات الارتفاعية', val: 'تصاميم مخصصة لارتفاعات شاهقة لدعم الرافعات والشاحنات الكبرى' }
-                        ];
-                      } else if (title.includes('شبوك') || title.includes('حديد') || title.includes('سياج')) {
-                        specs = [
-                          { label: 'الأسلاك والشبكة المعتمدة', val: 'شبوك مجلفنة حارة ومكسية بـ PVC أخضر وأبيض لمكافحة الصدأ الملح' },
-                          { label: 'الحماية وضد المؤثرات', val: 'طلاء دهان ناري أساس مع ايبوكسي سميك مقاوم لرطوبة الدمام القصوى' },
-                          { label: 'أعمال القواعد والحواجز', val: 'صب وصبابات خرسانية تحت الأرض تثبت الشبوك في مواجهة أقوى الرياح' },
-                          { label: 'الوظيفة الميدانية المثالية', val: 'تأمين وتسوير الأراضي الشاسعة، المزارع، المناجم، والمواقع النفطية' }
-                        ];
-                      }
-                      return specs.map((sp, idx) => (
-                        <div key={idx} className="bg-neutral-50 border border-neutral-100 p-2.5 rounded-xl text-right">
-                          <span className="text-[10px] text-amber-600 font-bold block">{sp.label}</span>
-                          <span className="text-neutral-700 text-[11.5px] font-medium leading-relaxed mt-0.5 block">{sp.val}</span>
+                    {activeArticle.features.slice(0, 4).map((f: any, idx: number) => (
+                      <div key={idx} className="bg-neutral-50 border border-neutral-100 p-3 rounded-xl text-right flex gap-3">
+                        <span className="text-2xl shrink-0 mt-0.5">{f.icon}</span>
+                        <div>
+                          <span className="text-[11.5px] text-amber-600 font-bold block">{f.title}</span>
+                          <span className="text-neutral-700 text-[11px] font-medium leading-relaxed mt-0.5 block">{f.desc}</span>
                         </div>
-                      ));
-                    })()}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
                 {/* Sub-projects list togglers within this active service */}
                 <div className="mt-6 border-t border-neutral-100 pt-5">
-                  <p className="text-neutral-900 font-bold text-xs mb-3">📍 نماذج سوابق الأعمال والمشاريع المدونة بالخدمة:</p>
+                  <p className="text-neutral-900 font-bold text-xs mb-3">📍 نماذج سوابق أعمال حقيقية للخدمة:</p>
                   
                   {filteredProjects.length === 0 ? (
                     <div className="text-center py-6 bg-neutral-50 rounded-xl border border-dashed border-neutral-200">
@@ -734,7 +697,7 @@ export default function Home() {
                           }`}
                         >
                           <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                          <span>{proj.title}</span>
+                          <span>صورة رقم {idx + 1}</span>
                         </button>
                       ))}
                     </div>
@@ -753,16 +716,16 @@ export default function Home() {
                     >
                       {/* Subtitle, Title */}
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
-                        <span className="text-amber-500 font-bold text-[10px]">استعراض المشروع الميداني للتصميم</span>
+                        <span className="text-amber-500 font-bold text-[10px]">استعراض موقع العمل الميداني</span>
                         <div className="flex items-center gap-1 text-neutral-400 text-[10px] bg-neutral-900 px-2 py-1 rounded-md">
                           <MapPin className="w-3 h-3 text-amber-500" />
-                          <span>موقع التنفيذ المباشر: {activeProject.location}</span>
+                          <span>المنطقة الشرقية</span>
                         </div>
                       </div>
 
-                      <h4 className="text-base font-black text-white">{activeProject.title}</h4>
+                      <h4 className="text-base font-black text-white">{activeService.label}</h4>
                       <p className="text-neutral-350 text-[11.5px] mt-2 leading-relaxed pb-3 border-b border-neutral-800 pr-3 border-r-2 border-amber-500">
-                        {activeProject.description}
+                        {activeProject.alt}
                       </p>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4 items-center">
@@ -772,8 +735,8 @@ export default function Home() {
                             src={getImageUrl(activeProject)}
                             alt={activeProject.title}
                             fill
+                            unoptimized
                             className="object-cover group-hover/img:scale-105 transition-transform duration-500"
-                            referrerPolicy="no-referrer"
                           />
                           
                           {/* Left/Right Overlaid navigation pills on image */}
@@ -799,12 +762,12 @@ export default function Home() {
                         <div className="bg-neutral-900 rounded-lg p-3.5 border border-neutral-800 flex flex-col justify-between h-full">
                           <p className="text-amber-400 text-[11px] font-black flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5 shrink-0 animate-pulse" />
-                            <span>💡 توجيه فني للمتانة وجودة الأعمال:</span>
+                            <span>💡 نصيحة وأفضلية للخدمة:</span>
                           </p>
                           <ul className="text-neutral-350 text-[10.5px] leading-relaxed mt-2 space-y-1.5 list-disc list-inside">
-                            <li>دهان الهياكل بطلب ايبوكسي مقاوم للصدأ ورطوبة الدمام والخبر.</li>
-                            <li>صب القواعد بخرسانة مقاومة للملوحة الشديدة SRC مكافحةً لتأثيرات التربة.</li>
-                            <li>ننصح بالتغطية بأقمشة الـ PVC الألمانية لضمان التظليل وعزل الحرارة ومقاومة الحريق.</li>
+                            {activeArticle.tips.slice(0, 3).map((tip: string, tIdx: number) => (
+                              <li key={tIdx}>{tip}</li>
+                            ))}
                           </ul>
                           <div className="text-[9px] text-neutral-500 font-mono mt-3 text-left">
                             مؤسسة تلال - الدمام والشرقية
@@ -877,7 +840,32 @@ export default function Home() {
             </Link>
           </div>
 
+          {/* ── Auto-scroll marquee of real works ── */}
+          <div className="home-mq-wrap my-8 overflow-hidden rounded-2xl -mx-4 sm:mx-0">
+            {/* Row 1 */}
+            <div className="mb-2 overflow-hidden">
+              <div className="home-mq-rtl gap-2">
+                {[...marqueeItems1, ...marqueeItems1].map((img: any, i: number) => (
+                  <div key={`m1-${i}`} className="relative h-24 w-36 shrink-0 overflow-hidden rounded-xl border border-neutral-200 shadow-sm">
+                    <Image src={img.src} alt={img.title} fill unoptimized className="object-cover" sizes="144px" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Row 2 */}
+            <div className="overflow-hidden">
+              <div className="home-mq-ltr gap-2">
+                {[...marqueeItems2, ...marqueeItems2].map((img: any, i: number) => (
+                  <div key={`m2-${i}`} className="relative h-24 w-36 shrink-0 overflow-hidden rounded-xl border border-neutral-200 shadow-sm">
+                    <Image src={img.src} alt={img.title} fill unoptimized className="object-cover" sizes="144px" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* Service Names horizontal Tab Bar (اسفله شريط اسماء الخدمات) */}
+
           <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 pt-2 scrollbar-none">
             {galleryFilters.map((tab) => (
               <button
@@ -906,8 +894,8 @@ export default function Home() {
                   src={img.src}
                   alt={img.title}
                   fill
+                  unoptimized
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
                 />
                 
                 {/* Visual hover layer */}
@@ -948,7 +936,7 @@ export default function Home() {
           
           {/* Projects structured as card boxes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            {projects.slice(0, 6).map((proj, idx) => (
+            {featuredProjects.map((proj, idx) => (
               <div
                 key={proj.id}
                 onClick={scrollToBlock4}

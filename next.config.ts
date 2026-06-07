@@ -12,8 +12,12 @@ const nextConfig: NextConfig = {
   // لكن نبقي على بعض المصادر كاحتياط
   images: {
     remotePatterns: [],
-    // تمكين تحسين الصور المحلية
     formats: ['image/webp', 'image/avif'],
+    // السماح بالصور بصيغ متعددة بما فيها HEIC
+    unoptimized: false,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   output: 'standalone',
   transpilePackages: ['motion'],
