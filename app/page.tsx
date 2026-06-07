@@ -25,6 +25,7 @@ const SERVICES = [
   { id: 'بيوت-شعر', label: 'بيوت شعر', sub: 'أصالة وفخامة', icon: HomeIcon, color: 'from-yellow-600 to-yellow-800', catKey: 'بيوت شعر', articleKey: 'بيوت شعر' },
   { id: 'شبوك', label: 'الشبوك', sub: 'تسوير متين', icon: Fence, color: 'from-cyan-600 to-cyan-800', catKey: 'شبوك', articleKey: 'شبوك' },
   { id: 'قرميد-وديكور', label: 'قرميد وديكور', sub: 'جمالية فريدة', icon: Gem, color: 'from-amber-600 to-amber-800', catKey: 'قرميد وديكور', articleKey: 'قرميد وديكور' },
+  { id: 'أعمال-متنوعة', label: 'أعمال متنوعة', sub: 'مقاولات وتركيبات متفرقة', icon: Sparkles, color: 'from-neutral-600 to-neutral-800', catKey: 'أعمال متنوعة', articleKey: 'أعمال متنوعة' },
 ];
 
 export default function Home() {
@@ -76,7 +77,8 @@ export default function Home() {
     'واجهات كلادنج',
     'بيوت شعر',
     'شبوك',
-    'قرميد وديكور'
+    'قرميد وديكور',
+    'أعمال متنوعة'
   ];
 
   const filteredGallery = galleryCategory === 'الكل'

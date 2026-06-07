@@ -11,9 +11,10 @@ const nextConfig: NextConfig = {
   // الصور محلية الآن - لا نحتاج remotePatterns للصور الرئيسية
   // لكن نبقي على بعض المصادر كاحتياط
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'ik.imagekit.io' },
+    ],
     formats: ['image/webp', 'image/avif'],
-    // السماح بالصور بصيغ متعددة بما فيها HEIC
     unoptimized: false,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
