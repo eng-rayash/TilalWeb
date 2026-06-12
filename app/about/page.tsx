@@ -32,7 +32,7 @@ export default function AboutPage() {
       <section className="relative bg-neutral-950 text-white py-20 overflow-hidden text-center">
         <div className="absolute inset-0 opacity-15">
           <Image
-            src="/images/hero/hero-services.jpg"
+            src="https://ik.imagekit.io/tilal/tilal-web/hero/hero-services.jpg"
             alt="من نحن - تلال للمقاولات"
             fill
             className="object-cover"
@@ -75,7 +75,7 @@ export default function AboutPage() {
 
           <div className="lg:col-span-5 relative h-[380px] sm:h-[480px] rounded-2xl overflow-hidden shadow-xl border border-neutral-100">
             <Image
-              src="/images/hero/service-fallback-4.jpg"
+              src="https://ik.imagekit.io/tilal/tilal-web/hero/service-fallback-4.jpg"
               alt="تلال للمقاولات"
               fill
               className="object-cover"

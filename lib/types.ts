@@ -39,16 +39,6 @@ export interface Project {
   category: string;
 }
 
-export interface Article {
-  url: string;
-  title: string;
-  description: string;
-  content: ContentBlock[];
-  images: ImageAsset[];
-  slug: string;
-  date: string;
-}
-
 export interface Testimonial {
   id: string;
   name: string;
@@ -61,6 +51,5 @@ export interface CleanData {
   settings: Setting;
   services: Service[];
   projects: Project[];
-  articles: Article[];
   testimonials: Testimonial[];
 }

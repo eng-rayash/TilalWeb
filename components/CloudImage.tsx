@@ -28,7 +28,7 @@ function ikTransform(src: string, w?: number, h?: number, q = 75): string {
 export default function CloudImage({
   src, alt, width, height, quality = 75,
   className = '', priority = false,
-  fallback = '/images/hero/hero-construction.jpg',
+  fallback = 'https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg',
 }: CloudImageProps) {
   const [error, setError] = useState(false);
   const imgSrc = error ? fallback : ikTransform(src, width, height, quality);

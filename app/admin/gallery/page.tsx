@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Image as ImageIcon, Plus, Trash2, X, Save, Search, Tag, ExternalLink, Pencil } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { ALL_CATEGORY, SITE_CATEGORIES } from '@/lib/site-categories';
 
 interface GalleryItem {
   id: string;
@@ -12,17 +13,7 @@ interface GalleryItem {
   title?: string;
 }
 
-const CATEGORIES = [
-  'مظلات وسواتر',
-  'هناجر ومستودعات',
-  'بناء وترميم',
-  'واجهات كلادنج',
-  'بيوت شعر مجهزة',
-  'برجولات وجلسات',
-  'شبوك تجارية وزراعية',
-  'قرميد وديكورات',
-  'أخرى'
-];
+const CATEGORIES = [...SITE_CATEGORIES];
 
 const emptyForm: Partial<GalleryItem> = { src: '', alt: '', category: CATEGORIES[0], title: '' };
 
@@ -30,7 +21,7 @@ export default function GalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterCat, setFilterCat] = useState('الكل');
+  const [filterCat, setFilterCat] = useState(ALL_CATEGORY);
   const [modal, setModal] = useState(false);
   const [mode, setMode] = useState<'add' | 'edit'>('add');
   const [form, setForm] = useState<Partial<GalleryItem>>({ ...emptyForm });
@@ -49,7 +40,7 @@ export default function GalleryPage() {
   useEffect(() => { load(); }, []);
 
   const filtered = items.filter(item => {
-    const matchCat = filterCat === 'الكل' || item.category === filterCat;
+    const matchCat = filterCat === ALL_CATEGORY || item.category === filterCat;
     const matchSearch = !search || item.alt?.includes(search) || item.title?.includes(search) || item.category?.includes(search);
     return matchCat && matchSearch;
   });
@@ -132,7 +123,7 @@ export default function GalleryPage() {
           />
         </div>
         <div className="flex gap-2 flex-wrap">
-          {['الكل', ...CATEGORIES].map(cat => (
+          {[ALL_CATEGORY, ...CATEGORIES].map(cat => (
             <button
               key={cat}
               onClick={() => setFilterCat(cat)}

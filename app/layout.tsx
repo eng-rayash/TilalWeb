@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: 'مؤسسة تلال للمقاولات',
     images: [
       {
-        url: '/images/hero/hero-construction.jpg',
+        url: 'https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg',
         width: 1200,
         height: 630,
         alt: 'مؤسسة تلال للمقاولات العامة - الدمام والشرقية',
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'مؤسسة تلال للمقاولات العامة | هناجر ومظلات وسواتر الشرقية',
     description: 'مؤسسة تلال للمقاولات العامة متخصصة في بناء هناجر ومستودعات، وتركيب مظلات وسواتر، وأعمال الترميم الشامل بأفضل جودة وأسعار تنافسية.',
-    images: ['/images/hero/hero-construction.jpg'],
+    images: ['https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg'],
   },
   verification: {
     google: 'REPLACE_WITH_YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE',
@@ -85,8 +85,8 @@ const organizationSchema = {
   name: 'مؤسسة تلال للمقاولات العامة',
   alternateName: 'تلال للمقاولات',
   url: 'https://tlal-ksa.com',
-  logo: 'https://tlal-ksa.com/images/hero/hero-construction.jpg',
-  image: 'https://tlal-ksa.com/images/hero/hero-construction.jpg',
+  logo: 'https://tlal-ksa.com/logo.png',
+  image: 'https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg',
   description:
     'مؤسسة مقاولات عامة بالدمام والشرقية متخصصة في بناء هناجر ومستودعات، وتركيب مظلات وسواتر، وأعمال الترميم الشامل بأفضل جودة وأسعار تنافسية.',
   telephone: '+966556575574',
@@ -138,6 +138,74 @@ const organizationSchema = {
     'https://wa.me/966556575574',
   ],
   priceRange: '$$',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', 'h2', '.speakable'],
+  },
+  knowsAbout: [
+    'بناء الهناجر والمستودعات',
+    'تركيب مظلات السيارات',
+    'تركيب سواتر الفلل',
+    'أعمال المقاولات العامة بالمنطقة الشرقية',
+    'واجهات كلادنج',
+    'أعمال الترميم والتشطيب',
+  ],
+};
+
+// FAQ Schema for GEO (AI Search Engines)
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'ما هي خدمات مؤسسة تلال للمقاولات بالدمام؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'تقدم مؤسسة تلال للمقاولات العامة خدمات شاملة تشمل: بناء الهناجر والمستودعات الصناعية، تركيب مظلات السيارات بجميع أنواعها، تركيب سواتر الفلل والمجمعات، واجهات كلادنج، برجولات وجلسات خارجية، بيوت شعر، شبوك وأسيجة معدنية، وأعمال الترميم والتشطيب الشامل في الدمام والخبر والجبيل وكافة مدن المنطقة الشرقية.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'كيف أتواصل مع تلال للمقاولات؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'يمكنك التواصل مع مؤسسة تلال للمقاولات عبر الهاتف: 0556575574، أو عبر واتساب على نفس الرقم، أو عبر البريد الإلكتروني info@tlal-ksa.com. نعمل على مدار أيام الأسبوع من الساعة 8 صباحاً حتى 10 مساءً.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'هل تقدم تلال ضماناً على أعمالها؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'نعم، تقدم مؤسسة تلال للمقاولات ضماناً معتمداً على جميع أعمالها، مع استخدام أجود الخامات المقاومة للصدأ والعوامل الجوية، ودهانات فرن حرارية تضمن الجودة والمتانة لسنوات طويلة.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'ما هي مناطق خدمة مؤسسة تلال للمقاولات؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'تخدم مؤسسة تلال للمقاولات العامة كافة مدن ومحافظات المنطقة الشرقية في المملكة العربية السعودية، بما فيها: الدمام، الخبر، الجبيل، القطيف، الأحساء، وسائر البلدات التابعة.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'كم تكلفة بناء هنجر بالمنطقة الشرقية؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'تتفاوت تكلفة بناء الهناجر والمستودعات حسب المساحة ومواصفات الحديد والتشطيب المطلوب. تقدم مؤسسة تلال للمقاولات أسعاراً تنافسية مع مقايسة مجانية. تواصل معنا للحصول على عرض سعر مخصص لمشروعك.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'هل تنفذ تلال مشاريع مظلات للأحياء السكنية والمجمعات؟',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'نعم، تتخصص مؤسسة تلال في تركيب مظلات السيارات للفلل والأحياء السكنية والمجمعات والمشاريع التجارية بجميع أنواع المظلات: الحديد، الخشب البلاستيكي، PVC، والبولي كربونيت، بتصاميم مخصصة تناسب كل مكان.',
+      },
+    },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -149,6 +217,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           id="organization-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          strategy="afterInteractive"
+        />
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
           strategy="afterInteractive"
         />
         <VisitorTracker />

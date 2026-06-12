@@ -21,7 +21,6 @@ const PAGE_LABELS: Record<string, string> = {
   '/': 'الصفحة الرئيسية',
   '/services': 'الخدمات',
   '/projects': 'المشاريع',
-  '/blog': 'المدونة',
   '/gallery': 'المعرض',
   '/contact': 'التواصل',
   '/about': 'من نحن',

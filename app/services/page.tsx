@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   MessageCircle, Phone, ArrowLeft, ChevronLeft, ChevronRight,
   Building2, Warehouse, Tent, ShieldCheck, TreePine,
-  Layers, Home, Fence, Gem
+  Layers, Home, Fence, Gem, Sparkles
 } from 'lucide-react';
 import galleryData from '@/lib/data/gallery_data.json';
 import articlesData from '@/lib/data/services_articles.json';
@@ -28,23 +28,20 @@ const SERVICES = [
   { id: 'بيوت شعر', label: 'بيوت شعر', sub: 'أصالة وفخامة', icon: Home, color: 'from-yellow-600 to-yellow-800', catKey: 'بيوت شعر', articleKey: 'بيوت شعر' },
   { id: 'شبوك', label: 'الشبوك', sub: 'تسوير متين', icon: Fence, color: 'from-cyan-600 to-cyan-800', catKey: 'شبوك', articleKey: 'شبوك' },
   { id: 'قرميد وديكور', label: 'قرميد وديكور', sub: 'جمالية فريدة', icon: Gem, color: 'from-amber-600 to-amber-800', catKey: 'قرميد وديكور', articleKey: 'قرميد وديكور' },
+  { id: 'أعمال متنوعة', label: 'أعمال متنوعة', sub: 'مقاولات وتركيبات متفرقة', icon: Sparkles, color: 'from-neutral-600 to-neutral-800', catKey: 'أعمال متنوعة', articleKey: 'أعمال متنوعة' },
 ];
 
-const marqueeStyles = `
-  @keyframes ms-rtl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .ms-rtl { animation: ms-rtl 50s linear infinite; display:flex; width:max-content; gap:12px; }
-  .ms-wrapper:hover .ms-rtl { animation-play-state: paused; }
-`;
+
 
 /* ─── Image Carousel ─────────────────────────────── */
 function ServiceCarousel({ images }: { images: GalleryItem[] }) {
   const [idx, setIdx] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const start = () => { timer.current = setInterval(() => setIdx(p => (p + 1) % images.length), 3000); };
-  const stop = () => { if (timer.current) clearInterval(timer.current); };
+  const start = useCallback(() => { timer.current = setInterval(() => setIdx(p => (p + 1) % images.length), 3000); }, [images.length]);
+  const stop = useCallback(() => { if (timer.current) clearInterval(timer.current); }, []);
 
-  useEffect(() => { if (images.length > 1) { start(); return stop; } }, [images.length]);
+  useEffect(() => { if (images.length > 1) { start(); return stop; } }, [images.length, start, stop]);
 
   if (!images.length) return null;
 
@@ -186,12 +183,7 @@ export default function ServicesPage() {
   const activeService = SERVICES.find(s => s.id === active)!;
   const categoryImages = allImages.filter(img => img.category === activeService.catKey).slice(0, 20);
 
-  // Build marquee images with sufficient repetition to prevent empty space gaps
-  let marqueeImages = [...categoryImages];
-  while (marqueeImages.length < 30 && categoryImages.length > 0) {
-    marqueeImages = [...marqueeImages, ...categoryImages];
-  }
-  marqueeImages = [...marqueeImages, ...marqueeImages];
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -207,7 +199,7 @@ export default function ServicesPage() {
           decodedCat.includes(s.sub)
         );
         if (matched) {
-          setActive(matched.id);
+          setActive(matched.id); // eslint-disable-line react-hooks/set-state-in-effect
         }
       }
     }
@@ -215,7 +207,7 @@ export default function ServicesPage() {
 
   return (
     <main dir="rtl" className="min-h-screen bg-gray-950 text-white">
-      <style dangerouslySetInnerHTML={{ __html: marqueeStyles }} />
+
 
       {/* ── HERO ─────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 py-20 text-center">
@@ -332,18 +324,7 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                {/* Auto-scroll strip */}
-                {marqueeImages.length > 0 && (
-                  <div className="ms-wrapper mb-8 overflow-hidden rounded-2xl">
-                    <div className="ms-rtl">
-                      {marqueeImages.map((img, i) => (
-                        <div key={`${img.id}-${i}`} className="relative h-20 w-32 shrink-0 overflow-hidden rounded-xl border border-white/5">
-                          <Image src={img.src} alt={img.alt} fill unoptimized className="object-cover" sizes="128px" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Article */}
                 <ArticleSection articleKey={activeService.articleKey} />

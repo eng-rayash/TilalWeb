@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FolderOpen, Plus, Pencil, Trash2, X, Save, Search, MapPin, Image } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
+import { SITE_CATEGORIES } from '@/lib/site-categories';
 
 interface Project {
   id: string;
@@ -14,17 +15,7 @@ interface Project {
   images?: { src: string; alt: string }[];
 }
 
-const CATEGORIES = [
-  'مظلات وسواتر',
-  'هناجر ومستودعات',
-  'بناء وترميم',
-  'واجهات كلادنج',
-  'بيوت شعر مجهزة',
-  'برجولات وجلسات',
-  'شبوك تجارية وزراعية',
-  'قرميد وديكورات',
-  'أخرى'
-];
+const CATEGORIES = [...SITE_CATEGORIES];
 const emptyForm: Partial<Project> = { title: '', description: '', location: '', category: CATEGORIES[0], serviceSlug: '' };
 
 export default function ProjectsPage() {

@@ -8,6 +8,7 @@ import { MapPin, Phone, MessageCircle, ArrowLeft, Heart, Layers } from 'lucide-r
 import cleanData from '@/lib/data/clean_data.json';
 import galleryData from '@/lib/data/gallery_data.json';
 import { Project } from '@/lib/types';
+import { ALL_CATEGORY, GALLERY_FILTERS } from '@/lib/site-categories';
 
 export default function ProjectsPage() {
   const contactInfo = cleanData.settings;
@@ -22,27 +23,11 @@ export default function ProjectsPage() {
     images: [{ src: item.src, alt: item.alt || item.title }]
   }));
 
-  const categories = [
-    'الكل',
-    'مقاولات عامة وبناء',
-    'هناجر ومستودعات',
-    'مظلات',
-    'سواتر',
-    'برجولات وجلسات',
-    'واجهات كلادنج',
-    'بيوت شعر',
-    'شبوك',
-    'قرميد وديكور'
-  ];
-  const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const categories = [...GALLERY_FILTERS];
+  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORY);
   const [visibleCount, setVisibleCount] = useState(18);
 
-  // Reset pagination when category changes
-  useEffect(() => {
-    setVisibleCount(18);
-  }, [selectedCategory]);
-
-  const filteredProjects = selectedCategory === 'الكل'
+  const filteredProjects = selectedCategory === ALL_CATEGORY
     ? projects
     : projects.filter(p => p.category === selectedCategory);
 
@@ -52,7 +37,7 @@ export default function ProjectsPage() {
     if (item.images && item.images.length > 0 && item.images[0].src) {
       return item.images[0].src;
     }
-    return '/images/hero/hero-construction.jpg';
+    return 'https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg';
   };
 
   return (
@@ -62,7 +47,7 @@ export default function ProjectsPage() {
       <section className="relative bg-neutral-950 text-white py-20 overflow-hidden text-center">
         <div className="absolute inset-0 opacity-15">
           <Image
-            src="/images/hero/hero-construction.jpg"
+            src="https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg"
             alt="أعمال ومشاريع مؤسسة تلال بالدمام والشرقية"
             fill
             className="object-cover"
@@ -78,7 +63,7 @@ export default function ProjectsPage() {
           </p>
         </div>
       </section>
-
+ 
       {/* Grid categories Filter tab */}
       <section className="bg-white border-b border-neutral-200 py-5 sticky top-20 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,7 +71,10 @@ export default function ProjectsPage() {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setVisibleCount(18);
+                }}
                 className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategory === cat
                     ? 'bg-amber-500 text-neutral-950 shadow-md shadow-amber-500/10'
@@ -107,7 +95,7 @@ export default function ProjectsPage() {
             <Layers className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
             <h3 className="font-bold text-lg text-neutral-800">لا توجد مشاريع مضافة في هذا التصنيف حالياً.</h3>
             <button 
-              onClick={() => setSelectedCategory('الكل')}
+              onClick={() => setSelectedCategory(ALL_CATEGORY)}
               className="mt-4 text-amber-500 font-bold hover:underline"
             >
               عرض كافة المعرض

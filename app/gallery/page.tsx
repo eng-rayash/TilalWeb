@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -13,6 +13,7 @@ import {
   Phone,
 } from 'lucide-react';
 import galleryData from '@/lib/data/gallery_data.json';
+import { CATEGORY_COLORS, GALLERY_FILTERS, ALL_CATEGORY } from '@/lib/site-categories';
 
 /* ─────────────────────────────────────────────────────────────── */
 /*  Types                                                          */
@@ -30,65 +31,17 @@ interface GalleryItem {
 /* ─────────────────────────────────────────────────────────────── */
 const allImages: GalleryItem[] = galleryData as GalleryItem[];
 
-const CATEGORIES = [
-  'الكل',
-  'مقاولات عامة وبناء',
-  'هناجر ومستودعات',
-  'مظلات',
-  'سواتر',
-  'برجولات وجلسات',
-  'واجهات كلادنج',
-  'بيوت شعر',
-  'شبوك',
-  'قرميد وديكور',
-];
+const CATEGORIES = [...GALLERY_FILTERS];
 
 const PAGE_SIZE = 60;
 
-/* Category colour map for badges */
-const CATEGORY_COLORS: Record<string, string> = {
-  'مقاولات عامة وبناء': 'bg-blue-600',
-  'هناجر ومستودعات': 'bg-emerald-600',
-  'مظلات': 'bg-purple-600',
-  'سواتر': 'bg-rose-600',
-  'برجولات وجلسات': 'bg-teal-600',
-  'واجهات كلادنج': 'bg-orange-600',
-  'بيوت شعر': 'bg-yellow-600',
-  'شبوك': 'bg-cyan-600',
-  'قرميد وديكور': 'bg-amber-600',
-};
 
-/* CSS for the marquee animation */
-const marqueeStyles = `
-  @keyframes marquee-rtl {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
-  @keyframes marquee-ltr {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
-  }
-  .marquee-rtl {
-    animation: marquee-rtl 40s linear infinite;
-    display: flex;
-    width: max-content;
-  }
-  .marquee-ltr {
-    animation: marquee-ltr 35s linear infinite;
-    display: flex;
-    width: max-content;
-  }
-  .marquee-wrapper:hover .marquee-rtl,
-  .marquee-wrapper:hover .marquee-ltr {
-    animation-play-state: paused;
-  }
-`;
 
 /* ─────────────────────────────────────────────────────────────── */
 /*  Main Component                                                 */
 /* ─────────────────────────────────────────────────────────────── */
 export default function GalleryPage() {
-  const [activeCategory, setActiveCategory] = useState<string>('الكل');
+  const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORY);
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -97,30 +50,24 @@ export default function GalleryPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const cat = params.get('category');
-      if (cat && CATEGORIES.includes(cat)) {
-        setActiveCategory(cat);
+      if (cat && CATEGORIES.includes(cat as any)) {
+        setActiveCategory(cat); // eslint-disable-line react-hooks/set-state-in-effect
       }
     }
   }, []);
 
   /* Filtered images */
-  const filteredImages =
-    activeCategory === 'الكل'
+  const filteredImages = useMemo(() => {
+    return activeCategory === ALL_CATEGORY
       ? allImages
       : allImages.filter((img) => img.category === activeCategory);
+  }, [activeCategory]);
 
   const displayedImages = filteredImages.slice(0, visibleCount);
 
-  /* Marquee strips — pick 20 spread across all categories */
-  const marqueeRow1 = allImages.filter((_, i) => i % 2 === 0).slice(0, 20);
-  const marqueeRow2 = allImages.filter((_, i) => i % 2 === 1).slice(0, 20);
-  const marqueeLoop1 = [...marqueeRow1, ...marqueeRow1];
-  const marqueeLoop2 = [...marqueeRow2, ...marqueeRow2];
 
-  /* Reset pagination when category changes */
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [activeCategory]);
+
+
 
   /* Lightbox keyboard navigation */
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
@@ -168,7 +115,7 @@ export default function GalleryPage() {
   /* ──────────────────────────────────────────────────────────── */
   return (
     <main dir="rtl" className="min-h-screen bg-gray-950 text-white">
-      <style dangerouslySetInnerHTML={{ __html: marqueeStyles }} />
+
 
       {/* ══════════════════════════════════════════════════════════
           HERO SECTION
@@ -244,72 +191,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          AUTO-SCROLL MARQUEE STRIP
-      ══════════════════════════════════════════════════════════ */}
-      <section className="marquee-wrapper overflow-hidden bg-gray-950 py-4">
-        {/* Row 1 – right-to-left */}
-        <div className="mb-3 overflow-hidden">
-          <div className="marquee-rtl gap-3">
-            {marqueeLoop1.map((img, i) => (
-              <div
-                key={`r1-${img.id}-${i}`}
-                className="relative mx-1.5 h-[120px] w-[180px] flex-shrink-0 cursor-pointer overflow-hidden rounded-xl border border-white/5 shadow-lg transition-transform duration-300 hover:scale-105"
-                onClick={() => {
-                  const idx = filteredImages.findIndex((f) => f.id === img.id);
-                  if (idx !== -1) setLightboxIndex(idx);
-                  else {
-                    setActiveCategory('الكل');
-                    setTimeout(() => {
-                      const newIdx = allImages.findIndex((f) => f.id === img.id);
-                      setLightboxIndex(newIdx !== -1 ? newIdx : 0);
-                    }, 50);
-                  }
-                }}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                  sizes="180px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Row 2 – left-to-right */}
-        <div className="overflow-hidden">
-          <div className="marquee-ltr gap-3">
-            {marqueeLoop2.map((img, i) => (
-              <div
-                key={`r2-${img.id}-${i}`}
-                className="relative mx-1.5 h-[120px] w-[180px] flex-shrink-0 cursor-pointer overflow-hidden rounded-xl border border-white/5 shadow-lg transition-transform duration-300 hover:scale-105"
-                onClick={() => {
-                  setActiveCategory('الكل');
-                  setTimeout(() => {
-                    const newIdx = allImages.findIndex((f) => f.id === img.id);
-                    setLightboxIndex(newIdx !== -1 ? newIdx : 0);
-                  }, 50);
-                }}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                  sizes="180px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════════════════
           STICKY FILTER BAR
@@ -321,7 +203,10 @@ export default function GalleryPage() {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setVisibleCount(PAGE_SIZE);
+                }}
                 className={`flex-shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 ${
                   activeCategory === cat
                     ? 'bg-amber-500 text-gray-950 shadow-lg shadow-amber-500/30'

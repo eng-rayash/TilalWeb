@@ -27,17 +27,79 @@ const SLUG_TO_GALLERY: Record<string, string> = {
   'بيوت-شعر': 'بيوت شعر',
   'شبوك': 'شبوك',
   'قرميد-وديكور': 'قرميد وديكور',
+  'أعمال-متنوعة': 'أعمال متنوعة',
 };
+
+function DetailedContent({ blocks }: { blocks?: { type: string; text: string }[] }) {
+  if (!blocks?.length) return null;
+
+  return (
+    <div className="rounded-3xl border border-white/5 bg-white/3 p-6 md:p-8">
+      <div className="space-y-5">
+        {blocks.map((block, index) => {
+          if (block.type === 'h2') {
+            return (
+              <h2 key={index} className="border-r-4 border-amber-500 pr-4 pt-1 text-xl font-black leading-relaxed text-white md:text-2xl">
+                {block.text}
+              </h2>
+            );
+          }
+
+          if (block.type === 'h3' || block.type === 'h4') {
+            return (
+              <h3 key={index} className="pt-2 text-lg font-bold leading-relaxed text-amber-300">
+                {block.text}
+              </h3>
+            );
+          }
+
+          if (block.type === 'li') {
+            return (
+              <div key={index} className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-sm leading-8 text-gray-300">
+                <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-amber-400" />
+                <span>{block.text}</span>
+              </div>
+            );
+          }
+
+          return (
+            <p key={index} className="text-sm leading-8 text-gray-300 md:text-base">
+              {block.text}
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FaqSection({ faq }: { faq?: { q: string; a: string }[] }) {
+  if (!faq?.length) return null;
+
+  return (
+    <div className="rounded-2xl border border-white/5 bg-white/3 p-6">
+      <h3 className="mb-4 font-bold text-white">أسئلة شائعة حول الخدمة</h3>
+      <div className="space-y-3">
+        {faq.map((item, index) => (
+          <div key={index} className="rounded-xl border border-white/5 bg-gray-950/40 p-4">
+            <h4 className="text-sm font-bold text-amber-300">{item.q}</h4>
+            <p className="mt-2 text-sm leading-7 text-gray-400">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* ─── Carousel ───────────────────────────────────── */
 function PhotoCarousel({ images, onOpen }: { images: GalleryItem[]; onOpen: (i: number) => void }) {
   const [idx, setIdx] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const start = () => { timer.current = setInterval(() => setIdx(p => (p + 1) % images.length), 3500); };
-  const stop = () => { if (timer.current) clearInterval(timer.current); };
+  const start = useCallback(() => { timer.current = setInterval(() => setIdx(p => (p + 1) % images.length), 3500); }, [images.length]);
+  const stop = useCallback(() => { if (timer.current) clearInterval(timer.current); }, []);
 
-  useEffect(() => { if (images.length > 1) { start(); return stop; } }, [images.length]);
+  useEffect(() => { if (images.length > 1) { start(); return stop; } }, [images.length, start, stop]);
 
   if (!images.length) return null;
 
@@ -172,6 +234,7 @@ function Lightbox({ images, idx, onClose, onNav }: { images: GalleryItem[]; idx:
 /* ─── Main Page ──────────────────────────────────── */
 export default function SingleServicePage({ params }: PageProps) {
   const { slug } = use(params);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const decodedSlug = decodeURIComponent(slug);
   const contactInfo = cleanData.settings;
 
@@ -199,8 +262,6 @@ export default function SingleServicePage({ params }: PageProps) {
       id: String(i), src: imgSrc, title: art.title,
       category: galleryCategory, alt: `${art.title} - صورة رقم ${i + 1}`
     }));
-
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   // Generate other services list for sidebar
   const otherServices = Object.entries(articlesData)
@@ -271,6 +332,8 @@ export default function SingleServicePage({ params }: PageProps) {
                 <p className="text-gray-300 leading-relaxed">{art.intro}</p>
               </div>
 
+              <DetailedContent blocks={art.content} />
+
               {/* Features Grid */}
               <div>
                 <h3 className="mb-4 text-lg font-bold text-white">مميزات الخدمة</h3>
@@ -308,6 +371,8 @@ export default function SingleServicePage({ params }: PageProps) {
                   ))}
                 </ul>
               </div>
+
+              <FaqSection faq={art.faq} />
             </div>
           </div>
 
