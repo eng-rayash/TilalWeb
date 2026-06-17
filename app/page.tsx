@@ -81,7 +81,7 @@ export default function Home() {
 
   const filteredGallery = galleryCategory === 'الكل'
     ? rawGalleryItems
-    : rawGalleryItems.filter(item => item.category === galleryCategory);
+    : (galleryItemsRaw as any[]).filter(item => item.category === galleryCategory).slice(0, 24);
 
   const block4Ref = useRef<HTMLElement>(null);
 

@@ -158,7 +158,7 @@ function ArticleSection({ articleKey }: { articleKey: string }) {
       {/* CTA */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <a
-          href={`https://wa.me/00966506819387?text=${encodeURIComponent(`أريد الاستفسار عن خدمة ${art.title}`)}`}
+          href={`https://wa.me/966506819387?text=${encodeURIComponent(`أريد الاستفسار عن خدمة ${art.title}`)}`}
           target="_blank" rel="noopener noreferrer"
           className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-green-600 py-4 font-bold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-500 hover:scale-[1.02]"
         >
