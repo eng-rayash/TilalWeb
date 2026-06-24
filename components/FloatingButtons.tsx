@@ -6,8 +6,8 @@ import cleanData from '@/lib/data/clean_data.json';
 
 export default function FloatingButtons() {
   const contactInfo = cleanData.settings;
-  const whatsappNumber = contactInfo.whatsapp || '966506819387';
-  const phoneNumber = contactInfo.phone || '0506819387';
+  const whatsappNumber = contactInfo.whatsapp || '966550916334';
+  const phoneNumber = contactInfo.phone || '0550916334';
 
   // Construct URL
   const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent('السلام عليكم مؤسسة تلال للمقاولات العامة، أرغب في الاستفسار عن خدمات التشييد والمقاولات.')}`;

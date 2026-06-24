@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'معرض أعمالنا وصور مشاريعنا | مؤسسة تلال للمقاولات',
     description: 'شاهد أرشيف صور حية من مشاريع مؤسسة تلال للمقاولات العامة بالشرقية. مظلات سيارات حديثة، سواتر فلل راقية، هناجر ومستودعات كبرى منفذة بالدمام والخبر والجبيل.',
-    url: 'https://tlal-ksa.com/gallery',
+    url: 'https://tilall.com/gallery',
     type: 'website',
   },
   twitter: {

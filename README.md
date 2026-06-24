@@ -4,7 +4,7 @@
 
 ![Tilal Logo](./public/logo.png)
 
-**موقع إلكتروني احترافي لشركة تلال للمقاولات**  
+**موقع ويب لشركة تلال للمقاولات**  
 *Next.js 15 · React 19 · TypeScript · Tailwind CSS 4*
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)

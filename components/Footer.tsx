@@ -156,7 +156,7 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-amber-400 shrink-0" />
                 <a href={`tel:${contactInfo.phone}`} className="hover:text-amber-400 font-bold transition-colors">
-                  {contactInfo.phone || '0556575574'}
+                  {contactInfo.phone || '0550916334'}
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -167,13 +167,13 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {contactInfo.whatsapp || '966556575574'}
+                  {contactInfo.whatsapp || '966550916334'}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-amber-400 shrink-0" />
-                <a href={`mailto:${contactInfo.email || 'info@tlal-ksa.com'}`} className="hover:text-stone-200 transition-colors text-xs">
-                  {contactInfo.email || 'info@tlal-ksa.com'}
+                <a href={`mailto:${contactInfo.email || 'info@tilall.com'}`} className="hover:text-stone-200 transition-colors text-xs">
+                  {contactInfo.email || 'info@tilall.com'}
                 </a>
               </li>
               <li className="flex items-start gap-3">

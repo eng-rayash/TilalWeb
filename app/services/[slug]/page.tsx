@@ -207,7 +207,7 @@ function Lightbox({ images, idx, onClose, onNav }: { images: GalleryItem[]; idx:
 
         <div className="mt-3 flex items-center justify-between">
           <p className="text-sm text-gray-400">{images[idx].alt}</p>
-          <a href={`https://wa.me/966506819387?text=${encodeURIComponent(`أريد الاستفسار عن مشروع: ${images[idx].alt}`)}`}
+          <a href={`https://wa.me/966550916334?text=${encodeURIComponent(`أريد الاستفسار عن مشروع: ${images[idx].alt}`)}`}
             target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-bold text-white hover:bg-green-500 transition-colors">
             <MessageCircle className="h-4 w-4" /> استفسر عن هذا المشروع
@@ -388,7 +388,7 @@ export default function SingleServicePage({ params }: PageProps) {
                 </p>
                 <div className="space-y-3">
                   <a
-                    href={`https://wa.me/966506819387?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن ${art.title}`)}`}
+                    href={`https://wa.me/966550916334?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن ${art.title}`)}`}
                     target="_blank" rel="noopener noreferrer"
                     className="flex w-full items-center justify-center gap-2 rounded-2xl bg-green-600 py-3.5 font-bold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-500 hover:scale-[1.02]">
                     <MessageCircle className="h-5 w-5" /> تواصل واتساب الآن

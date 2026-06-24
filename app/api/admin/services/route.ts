@@ -49,7 +49,7 @@ async function writeJson(file: string, data: unknown) {
 function toCleanService(key: string, article: ServiceArticle) {
   const category = CATEGORY_BY_KEY[key] || key;
   return {
-    url: `https://tlal-ksa.com/services/${encodeURIComponent(article.slug)}`,
+    url: `https://tilall.com/services/${encodeURIComponent(article.slug)}`,
     title: article.title,
     description: article.intro || article.subtitle || article.title,
     content: article.content || [],
@@ -109,7 +109,7 @@ export async function GET() {
     title: article.title,
     description: article.intro || article.subtitle || '',
     category: CATEGORY_BY_KEY[key] || key,
-    url: `https://tlal-ksa.com/services/${encodeURIComponent(article.slug)}`,
+    url: `https://tilall.com/services/${encodeURIComponent(article.slug)}`,
     article,
   }));
 

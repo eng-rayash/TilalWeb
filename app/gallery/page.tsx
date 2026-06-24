@@ -108,7 +108,7 @@ export default function GalleryPage() {
 
   /* WhatsApp link */
   const waLink = (title: string) =>
-    `https://wa.me/966506819387?text=${encodeURIComponent(
+    `https://wa.me/966550916334?text=${encodeURIComponent(
       `أرغب في الاستفسار عن ${title}`
     )}`;
 
@@ -484,7 +484,7 @@ export default function GalleryPage() {
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               {/* WhatsApp */}
               <a
-                href="https://wa.me/966506819387?text=أرغب في الاستفسار عن خدماتكم"
+                href="https://wa.me/966550916334?text=أرغب في الاستفسار عن خدماتكم"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 rounded-2xl bg-gray-950 px-8 py-4 text-base font-bold text-white shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gray-800"
@@ -495,11 +495,11 @@ export default function GalleryPage() {
 
               {/* Phone */}
               <a
-                href="tel:+966506819387"
+                href="tel:+966550916334"
                 className="flex items-center gap-3 rounded-2xl border-2 border-gray-950/30 bg-transparent px-8 py-4 text-base font-bold text-gray-950 transition-all duration-300 hover:scale-105 hover:bg-gray-950/10"
               >
                 <Phone className="h-5 w-5" />
-                اتصل الآن: 0506819387
+                اتصل الآن: 0550916334
               </a>
             </div>
 

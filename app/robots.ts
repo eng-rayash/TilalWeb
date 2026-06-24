@@ -18,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://tlal-ksa.com/sitemap.xml',
-    host: 'https://tlal-ksa.com',
+    sitemap: 'https://tilall.com/sitemap.xml',
+    host: 'https://tilall.com',
   };
 }

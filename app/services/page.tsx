@@ -158,7 +158,7 @@ function ArticleSection({ articleKey }: { articleKey: string }) {
       {/* CTA */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <a
-          href={`https://wa.me/966506819387?text=${encodeURIComponent(`أريد الاستفسار عن خدمة ${art.title}`)}`}
+          href={`https://wa.me/966550916334?text=${encodeURIComponent(`أريد الاستفسار عن خدمة ${art.title}`)}`}
           target="_blank" rel="noopener noreferrer"
           className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-green-600 py-4 font-bold text-white shadow-lg shadow-green-600/20 transition-all hover:bg-green-500 hover:scale-[1.02]"
         >
@@ -166,11 +166,11 @@ function ArticleSection({ articleKey }: { articleKey: string }) {
           تواصل واتساب الآن
         </a>
         <a
-          href="tel:+966506819387"
+          href="tel:+966550916334"
           className="flex-1 flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-4 font-bold text-white transition-all hover:border-amber-500 hover:bg-amber-500/10"
         >
           <Phone className="h-5 w-5 text-amber-400" />
-          0506819387
+          0550916334
         </a>
       </div>
     </div>

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'مشاريعنا والإنشاءات المنجزة | مؤسسة تلال للمقاولات',
     description: 'استعرض سيرة مشاريع مؤسسة تلال للمقاولات في المنطقة الشرقية. فخورون بتنفيذ أرقى مشاريع تركيب الهناجر، المستودعات التجارية، مظلات المدارس والمصانع.',
-    url: 'https://tlal-ksa.com/projects',
+    url: 'https://tilall.com/projects',
   },
   twitter: {
     card: 'summary_large_image',

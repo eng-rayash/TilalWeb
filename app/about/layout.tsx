@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'من نحن ومجالات تميزنا | مؤسسة تلال للمقاولات',
     description: 'تعرف على مؤسسة تلال للمقاولات العامة والإنشاءات المعدنية والتركيبات الحديدية بالمنطقة الشرقية. خبرة تمتد لأكثر من ١٠ سنوات في خدمة قطاعات التشييد والمقاولات والصناعة.',
-    url: 'https://tlal-ksa.com/about',
+    url: 'https://tilall.com/about',
   },
   twitter: {
     card: 'summary',

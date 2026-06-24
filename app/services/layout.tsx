@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'خدمات المقاولات والتركيبات الحديدية بالشرقية | مؤسسة تلال للمقاولات',
     description: 'مجموعة متكاملة من خدمات وأعمال مؤسسة تلال للمقاولات: تصميم وبناء المستودعات والهناجر الكبرى، تركيب السواتر ومظلات السيارات، تشييد شبوك المزارع والمباني السكنية.',
-    url: 'https://tlal-ksa.com/services',
+    url: 'https://tilall.com/services',
   },
   twitter: {
     card: 'summary_large_image',

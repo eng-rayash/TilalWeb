@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import articlesData from '@/lib/data/services_articles.json';
 
-const BASE_URL = 'https://tlal-ksa.com';
+const BASE_URL = 'https://tilall.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Static pages

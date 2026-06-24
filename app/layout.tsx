@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: '%s | مؤسسة تلال للمقاولات بالمنطقة الشرقية'
   },
   description: 'مؤسسة تلال للمقاولات العامة متخصصة في بناء هناجر ومستودعات، وتركيب مظلات وسواتر، وأعمال الترميم الشامل بأفضل جودة وأسعار تنافسية بالدمام والخبر وكافة مدن الشرقية.',
-  metadataBase: new URL('https://tlal-ksa.com'),
+  metadataBase: new URL('https://tilall.com'),
   alternates: {
     canonical: '/',
   },
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ar_SA',
-    url: 'https://tlal-ksa.com',
+    url: 'https://tilall.com',
     title: 'مؤسسة تلال للمقاولات العامة بالدمام والخبر | هناجر ومظلات وسواتر الشرقية',
     description: 'مؤسسة تلال للمقاولات العامة متخصصة في بناء هناجر ومستودعات، وتركيب مظلات وسواتر، وأعمال الترميم الشامل بأفضل جودة وأسعار تنافسية بالدمام والخبر وكافة مدن الشرقية.',
     siteName: 'مؤسسة تلال للمقاولات',
@@ -81,16 +81,16 @@ export const metadata: Metadata = {
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'GeneralContractor'],
-  '@id': 'https://tlal-ksa.com/#organization',
+  '@id': 'https://tilall.com/#organization',
   name: 'مؤسسة تلال للمقاولات العامة',
   alternateName: 'تلال للمقاولات',
-  url: 'https://tlal-ksa.com',
-  logo: 'https://tlal-ksa.com/logo.png',
+  url: 'https://tilall.com',
+  logo: 'https://tilall.com/logo.png',
   image: 'https://ik.imagekit.io/tilal/tilal-web/hero/hero-construction.jpg',
   description:
     'مؤسسة مقاولات عامة بالدمام والشرقية متخصصة في بناء هناجر ومستودعات، وتركيب مظلات وسواتر، وأعمال الترميم الشامل بأفضل جودة وأسعار تنافسية.',
-  telephone: '+966556575574',
-  email: 'info@tlal-ksa.com',
+  telephone: '+966550916334',
+  email: 'info@tilall.com',
   foundingDate: '2014',
   numberOfEmployees: { '@type': 'QuantitativeValue', value: 20 },
   address: {
@@ -135,7 +135,7 @@ const organizationSchema = {
     ],
   },
   sameAs: [
-    'https://wa.me/966556575574',
+    'https://wa.me/966550916334',
   ],
   priceRange: '$$',
   speakable: {
@@ -170,7 +170,7 @@ const faqSchema = {
       name: 'كيف أتواصل مع تلال للمقاولات؟',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'يمكنك التواصل مع مؤسسة تلال للمقاولات عبر الهاتف: 0556575574، أو عبر واتساب على نفس الرقم، أو عبر البريد الإلكتروني info@tlal-ksa.com. نعمل على مدار أيام الأسبوع من الساعة 8 صباحاً حتى 10 مساءً.',
+        text: 'يمكنك التواصل مع مؤسسة تلال للمقاولات عبر الهاتف: 0550916334، أو عبر واتساب على نفس الرقم، أو عبر البريد الإلكتروني info@tilall.com. نعمل على مدار أيام الأسبوع من الساعة 8 صباحاً حتى 10 مساءً.',
       },
     },
     {

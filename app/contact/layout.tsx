@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'اتصل بنا وتواصل فوري لمشروعك | مؤسسة تلال للمقاولات',
     description: 'تواصل مع مؤسسة تلال للمقاولات العامة بالدمام والخبر للرد على استفساراتكم فوراً وتوفير أفضل خدمات واستشارات المظلات والسواتر والهناجر والمستودعات بالشرقية.',
-    url: 'https://tlal-ksa.com/contact',
+    url: 'https://tilall.com/contact',
   },
   twitter: {
     card: 'summary',

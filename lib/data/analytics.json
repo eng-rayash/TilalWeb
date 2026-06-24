@@ -727,6 +727,70 @@
       "browser": "Chrome",
       "referrer": "localhost",
       "sessionId": "s2qbs1xspbbmqij8dse"
+    },
+    {
+      "timestamp": "2026-06-18T20:24:17.708Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "cqaebhf60ksmqjy7b5e"
+    },
+    {
+      "timestamp": "2026-06-18T20:24:22.422Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "cqaebhf60ksmqjy7b5e"
+    },
+    {
+      "timestamp": "2026-06-20T18:23:54.275Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Edge",
+      "referrer": "localhost",
+      "sessionId": "unknown"
+    },
+    {
+      "timestamp": "2026-06-20T18:24:57.125Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Edge",
+      "referrer": "localhost",
+      "sessionId": "m9j5wvckt2mqmotkh0"
+    },
+    {
+      "timestamp": "2026-06-20T18:51:00.915Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "kkfc5xr8szmqmpr1vq"
+    },
+    {
+      "timestamp": "2026-06-20T18:52:50.620Z",
+      "page": "/",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "f8yk5qxkr5hmqmpte58"
+    },
+    {
+      "timestamp": "2026-06-20T18:53:18.034Z",
+      "page": "/services",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "f8yk5qxkr5hmqmpte58"
+    },
+    {
+      "timestamp": "2026-06-20T18:53:27.661Z",
+      "page": "/services",
+      "device": "desktop",
+      "browser": "Chrome",
+      "referrer": "localhost",
+      "sessionId": "f8yk5qxkr5hmqmpte58"
     }
   ]
 }
